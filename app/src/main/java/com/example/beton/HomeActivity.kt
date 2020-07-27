@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -35,10 +34,9 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var users: DatabaseReference
     private lateinit var usersListener: ChildEventListener
 
-    private lateinit var nav: NavigationView
     private lateinit var headerNav: View
     private lateinit var nameNav: TextView
-    private lateinit var emaileNav: TextView
+    private lateinit var emailNav: TextView
     private lateinit var photoNav: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,7 +57,7 @@ class HomeActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow
+                R.id.nav_home, R.id.nav_orders, R.id.nav_setting, R.id.nav_profile
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -70,12 +68,20 @@ class HomeActivity : AppCompatActivity() {
         database = Firebase.database
         users = database.reference.child("users")
 
-        nav = findViewById(R.id.nav_view)
-        headerNav = nav.getHeaderView(0)
+        headerNav = navView.getHeaderView(0)
 
         nameNav = headerNav.findViewById(R.id.nameHome)
-        emaileNav = headerNav.findViewById(R.id.emailHome)
+        emailNav = headerNav.findViewById(R.id.emailHome)
         photoNav = headerNav.findViewById(R.id.photoNav)
+
+//        headerNav.setOnClickListener {
+//            startActivity(
+//                Intent(
+//                    this,
+//                    ProfileActivity::class.java
+//                )
+//            )
+//        }
 
         usersListener = object: ChildEventListener {
             override fun onCancelled(error: DatabaseError) {
@@ -95,7 +101,7 @@ class HomeActivity : AppCompatActivity() {
 
                 if (user?.uid == auth.currentUser?.uid) {
                     nameNav.text = user?.name
-                    emaileNav.text = user?.email
+                    emailNav.text = user?.email
 //                    if (!user?.avatar?.isEmpty()!!) {
 //
 //                    }
@@ -119,18 +125,44 @@ class HomeActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
+        return when (item.itemId) {
             R.id.sign_out -> {
                 Firebase.auth.signOut()
-                startActivity(Intent(this, SignInActivity::class.java))
-                return true
+                startActivity(
+                    Intent(
+                        this,
+                        SignInActivity::class.java
+                    )
+                )
+                true
             }
-            else -> return super.onOptionsItemSelected(item)
+            R.id.action_settings -> {
+                startActivity(
+                    Intent(
+                        this,
+                        SettingsActivity::class.java
+                    )
+                )
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    fun signOut(item: MenuItem) {
+        return when (item.itemId) {
+            R.id.sign_out_right -> {
+                Firebase.auth.signOut()
+                startActivity(Intent(this, SignInActivity::class.java))
+            }
+            else -> {
+
+            }
+        }
     }
 }
