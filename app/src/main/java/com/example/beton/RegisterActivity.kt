@@ -68,29 +68,49 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun registerUser(email: String, password: String, confirmPassword: String) {
-        if (password == confirmPassword) {
-            auth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this) { task ->
-                    if (task.isSuccessful) {
-                        // Sign in success, update UI with the signed-in user's information
-                        Log.d("Register", "createUserWithEmail:success")
-                        val user = auth.currentUser
-                        addUserToDatabase(user);
-                    } else {
-                        Log.w("Register", "createUserWithEmail:failure", task.exception)
-                        Toast.makeText(
-                            baseContext, "Authentication failed.",
-                            Toast.LENGTH_SHORT
-                        ).show()
+        when {
+            email.isEmpty() -> {
+                Toast.makeText(
+                    baseContext, "Please, enter email",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            password.isEmpty() -> {
+                Toast.makeText(
+                    baseContext, "Please, enter password",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            password != confirmPassword -> {
+                Toast.makeText(
+                    baseContext, "Password don't match.",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+            }
+            else -> {
+                auth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this) { task ->
+                        if (task.isSuccessful) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d("Register", "createUserWithEmail:success")
+                            val user = auth.currentUser
+                            addUserToDatabase(user);
+                            startActivity(Intent(
+                                this,
+                                HomeActivity::class.java
+                            ))
+                        } else {
+                            Log.w("Register", "createUserWithEmail:failure", task.exception)
+                            Toast.makeText(
+                                baseContext, "Authentication failed.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+
+
                     }
-
-
-                }
-        } else {
-            Toast.makeText(
-                baseContext, "Password don't match.",
-                Toast.LENGTH_SHORT
-            ).show()
+            }
         }
     }
 
