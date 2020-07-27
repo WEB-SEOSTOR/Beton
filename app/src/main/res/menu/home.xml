@@ -4,16 +4,11 @@
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
-        android:title="Настройки"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/about"
-        android:orderInCategory="100"
-        android:title="О нас"
+        android:title="@string/action_settings"
         app:showAsAction="never" />
     <item
         android:id="@+id/sign_out"
         android:orderInCategory="100"
-        android:title="Выйти"
+        android:title="Sign Out"
         app:showAsAction="never" />
 </menu>
