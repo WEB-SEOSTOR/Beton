@@ -19,7 +19,7 @@ class SplashActivity : AppCompatActivity() {
 
         Thread {
             try {
-                Thread.sleep(3000)
+                Thread.sleep(1500)
             } catch (e: Exception) {
                 e.printStackTrace()
             } finally {

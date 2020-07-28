@@ -14,6 +14,8 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class RegisterActivity : AppCompatActivity() {
@@ -28,8 +30,7 @@ class RegisterActivity : AppCompatActivity() {
 
     private lateinit var registerButton: Button
 
-    private lateinit var database: FirebaseDatabase
-    private lateinit var users: DatabaseReference
+    private lateinit var database: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,8 +38,7 @@ class RegisterActivity : AppCompatActivity() {
 
         auth = Firebase.auth
 
-        database = Firebase.database
-        users = database.reference.child("users")
+        database = Firebase.firestore
 
         logInButton = findViewById(R.id.logInButton)
 
@@ -115,11 +115,14 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun addUserToDatabase(currentUser: FirebaseUser?) {
-        val user = User()
-        user.uid = currentUser?.uid
-        user.email = currentUser?.email
-        user.name = nameRegister.text.toString().trim()
+        val user = hashMapOf(
+            "uid" to currentUser?.uid.toString().trim(),
+            "email" to currentUser?.email.toString().trim(),
+            "name" to nameRegister.text.toString().trim(),
+            "root" to "user"
+        )
 
-        users.push().setValue(user)
+        database.collection("users")
+            .add(user)
     }
 }

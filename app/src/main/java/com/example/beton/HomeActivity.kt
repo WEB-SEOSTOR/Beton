@@ -2,6 +2,7 @@ package com.example.beton
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -22,6 +23,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class HomeActivity : AppCompatActivity() {
@@ -30,9 +33,7 @@ class HomeActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
 
-    private lateinit var database: FirebaseDatabase
-    private lateinit var users: DatabaseReference
-    private lateinit var usersListener: ChildEventListener
+    private lateinit var database: FirebaseFirestore
 
     private lateinit var headerNav: View
     private lateinit var nameNav: TextView
@@ -65,8 +66,10 @@ class HomeActivity : AppCompatActivity() {
 
         auth = Firebase.auth
 
-        database = Firebase.database
-        users = database.reference.child("users")
+        database = Firebase.firestore
+
+
+
 
         headerNav = navView.getHeaderView(0)
 
@@ -83,38 +86,18 @@ class HomeActivity : AppCompatActivity() {
 //            )
 //        }
 
-        usersListener = object: ChildEventListener {
-            override fun onCancelled(error: DatabaseError) {
-
-            }
-
-            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-
-            }
-
-            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-
-            }
-
-            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                val user: User? = snapshot.getValue(User::class.java)
-
-                if (user?.uid == auth.currentUser?.uid) {
-                    nameNav.text = user?.name
-                    emailNav.text = user?.email
-//                    if (!user?.avatar?.isEmpty()!!) {
-//
-//                    }
+        database.collection("users")
+            .whereEqualTo("uid", auth.currentUser?.uid)
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    nameNav.text = document.data["name"].toString()
+                    emailNav.text = document.data["email"].toString()
                 }
             }
-
-            override fun onChildRemoved(snapshot: DataSnapshot) {
-
+            .addOnFailureListener { exception ->
+                Log.w("home", "Error getting documents: ", exception)
             }
-
-        }
-
-        users.addChildEventListener(usersListener)
 
     }
 

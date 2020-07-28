@@ -10,6 +10,8 @@ import android.widget.TextView
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class SignInActivity : AppCompatActivity() {
@@ -21,11 +23,15 @@ class SignInActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
 
+    private lateinit var database: FirebaseFirestore
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_in)
 
         auth = Firebase.auth
+
+        database = Firebase.firestore
 
         signUpButton = findViewById(R.id.SignUpButton)
 
@@ -34,7 +40,10 @@ class SignInActivity : AppCompatActivity() {
         logIn = findViewById(R.id.logIn)
 
         logIn.setOnClickListener {
-            logInAction(nameTextEdit.text.toString().trim(), passwordTextEdit.text.toString().trim())
+            logInAction(
+                nameTextEdit.text.toString().trim(),
+                passwordTextEdit.text.toString().trim()
+            )
         }
 
         signUpButton.setOnClickListener {
