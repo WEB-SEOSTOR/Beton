@@ -50,7 +50,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private var distance: Float? = null
     private lateinit var addressMarker: String
 
-    private lateinit var dist: TextView
     private lateinit var address: TextView
 
     private val markerOptions = MarkerOptions()
@@ -67,7 +66,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         }
 
         address = root.findViewById(R.id.mapAddress)
-        dist = root.findViewById(R.id.distance)
 
         factory.latitude = point.latitude
         factory.longitude = point.longitude
@@ -129,8 +127,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
             distance = factory.distanceTo(locationTo)
 
-            dist.text = distance.toString()
-
             mMap!!.clear()
             val cameraUpdate: CameraUpdate = CameraUpdateFactory.newLatLngZoom(
                 it, 15f
@@ -163,8 +159,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                     address.text = addressMarker
 
                     distance = factory.distanceTo(locationTo)
-
-                    dist.text = distance.toString()
 
                     mMap?.animateCamera(CameraUpdateFactory.newLatLng(latLng))
                     mMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15F))
